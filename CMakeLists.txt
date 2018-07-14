@@ -4,6 +4,9 @@ project(cmake_wrapper)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_library(libzmq INTERFACE IMPORTED)
 set_property(TARGET libzmq PROPERTY INTERFACE_COMPILE_DEFINITIONS ${CONAN_DEFINES})
 set_property(TARGET libzmq PROPERTY INTERFACE_LINK_LIBRARIES ${CONAN_LIBS})
