@@ -45,7 +45,7 @@ class ZmqPPConan(ConanFile):
         tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
                               'target_link_libraries(zmqpp ws2_32)',
                               'if(ZMQPP_BUILD_SHARED)\n'
-                              'target_link_libraries(zmqpp ws2_32)\n'
+                              'target_link_libraries(zmqpp ws2_32 iphlpapi)\n'
                               'endif()')
         tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
                               'generate_export_header(zmqpp)',

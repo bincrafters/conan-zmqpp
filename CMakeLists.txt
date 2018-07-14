@@ -4,4 +4,14 @@ project(cmake_wrapper)
 include(conanbuildinfo.cmake)
 conan_basic_setup()
 
+add_library(libzmq INTERFACE IMPORTED)
+set_property(TARGET libzmq PROPERTY INTERFACE_COMPILE_DEFINITIONS ${CONAN_DEFINES})
+set_property(TARGET libzmq PROPERTY INTERFACE_LINK_LIBRARIES ${CONAN_LIBS})
+set_property(TARGET libzmq PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CONAN_INCLUDE_DIRS})
+
+add_library(libzmq-static INTERFACE IMPORTED)
+set_property(TARGET libzmq-static PROPERTY INTERFACE_COMPILE_DEFINITIONS ${CONAN_DEFINES})
+set_property(TARGET libzmq-static PROPERTY INTERFACE_LINK_LIBRARIES ${CONAN_LIBS})
+set_property(TARGET libzmq-static PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${CONAN_INCLUDE_DIRS})
+
 add_subdirectory("source_subfolder")
