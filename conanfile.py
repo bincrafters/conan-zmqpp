@@ -42,10 +42,35 @@ class ZmqPPConan(ConanFile):
         tools.get("{0}/archive/{1}.tar.gz".format(source_url, self.version))
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
+        tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+                              'target_link_libraries(zmqpp ws2_32)',
+                              'if(ZMQPP_BUILD_SHARED)\n'
+                              'target_link_libraries(zmqpp ws2_32)\n'
+                              'endif()')
+        tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+                              'generate_export_header(zmqpp)',
+                              'if(ZMQPP_BUILD_SHARED)\n'
+                              'generate_export_header(zmqpp)\n'
+                              'else()\n'
+                              'generate_export_header(zmqpp-static BASE_NAME zmqpp)\n'
+                              'endif()')
+        tools.replace_in_file(os.path.join(self.source_subfolder, 'src', 'zmqpp', 'zap_request.cpp'),
+                              '#include', '#include <iterator>\n#include')
+        tools.replace_in_file(os.path.join(self.source_subfolder, 'src', 'zmqpp', 'socket.cpp'),
+                              'std::min', '(std::min<size_t>)')
 
     def configure_cmake(self):
         cmake = CMake(self)
-        cmake.definitions["BUILD_TESTS"] = False # example
+        cmake.definitions['ZMQPP_BUILD_STATIC'] = not self.options.shared
+        cmake.definitions['ZMQPP_BUILD_SHARED'] = self.options.shared
+        cmake.definitions['ZMQPP_BUILD_EXAMPLES'] = False
+        cmake.definitions['ZMQPP_BUILD_CLIENT'] = False
+        cmake.definitions['ZMQPP_BUILD_TESTS'] = False
+        cmake.definitions['ZMQPP_LIBZMQ_CMAKE'] = True
+        cmake.definitions['ZMQPP_LIBZMQ_NAME_STATIC'] = self.deps_cpp_info['zmq'].libs[0]
+        cmake.definitions['ZMQPP_LIBZMQ_NAME_SHARED'] = self.deps_cpp_info['zmq'].libs[0]
+        cmake.definitions['ZEROMQ_LIB_DIR'] = self.deps_cpp_info['zmq'].lib_paths[0]
+        cmake.definitions['ZEROMQ_INCLUDE_DIR'] = self.deps_cpp_info['zmq'].include_paths[0]
         if self.settings.os != 'Windows':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.configure(build_folder=self.build_subfolder)
@@ -59,15 +84,6 @@ class ZmqPPConan(ConanFile):
         self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
         cmake = self.configure_cmake()
         cmake.install()
-        # If the CMakeLists.txt has a proper install method, the steps below may be redundant
-        # If so, you can just remove the lines below
-        include_folder = os.path.join(self.source_subfolder, "include")
-        self.copy(pattern="*", dst="include", src=include_folder)
-        self.copy(pattern="*.dll", dst="bin", keep_path=False)
-        self.copy(pattern="*.lib", dst="lib", keep_path=False)
-        self.copy(pattern="*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", keep_path=False)
-        self.copy(pattern="*.dylib", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.libs = ['zmqpp' if self.options.shared else 'zmqpp-static']
