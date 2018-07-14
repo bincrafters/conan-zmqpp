@@ -5,15 +5,14 @@ from conans import ConanFile, CMake, tools
 import os
 
 
-class LibnameConan(ConanFile):
-    name = "libname"
-    version = "0.0.0"
-    description = "Keep it short"
-    url = "https://github.com/bincrafters/conan-libname"
-    homepage = "https://github.com/original_author/original_lib"
+class ZmqPPConan(ConanFile):
+    name = "zmqpp"
+    version = "4.2.0"
+    description = "0mq 'highlevel' C++ bindings"
+    url = "https://github.com/bincrafters/conan-zmqpp"
+    homepage = "https://github.com/zeromq/zmqpp"
     author = "Bincrafters <bincrafters@gmail.com>"
-    # Indicates License type of the packaged library
-    license = "MIT"
+    license = "MPL 2.0"
 
     # Packages the license for the conanfile.py
     exports = ["LICENSE.md"]
@@ -31,26 +30,17 @@ class LibnameConan(ConanFile):
     source_subfolder = "source_subfolder"
     build_subfolder = "build_subfolder"
 
-    # Use version ranges for dependencies unless there's a reason not to
-    # Update 2/9/18 - Per conan team, ranges are slow to resolve.
-    # So, with libs like zlib, updates are very rare, so we now use static version
-
-
-    requires = (
-        "OpenSSL/[>=1.0.2l]@conan/stable",
-        "zlib/1.2.11@conan/stable"
-    )
+    def requirements(self):
+        self.requires.add('zmq/4.2.2@bincrafters/stable')
 
     def config_options(self):
         if self.settings.os == 'Windows':
             del self.options.fPIC
 
     def source(self):
-        source_url = "https://github.com/libauthor/libname"
-        tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
+        source_url = "https://github.com/zeromq/zmqpp"
+        tools.get("{0}/archive/{1}.tar.gz".format(source_url, self.version))
         extracted_dir = self.name + "-" + self.version
-
-        #Rename to "source_subfolder" is a convention to simplify later steps
         os.rename(extracted_dir, self.source_subfolder)
 
     def configure_cmake(self):
