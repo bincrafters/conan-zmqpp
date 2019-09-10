@@ -1,5 +1,5 @@
 [![Download](https://api.bintray.com/packages/bincrafters/public-conan/zmqpp%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/zmqpp%3Abincrafters/_latestVersion)
-[![Build Status](https://travis-ci.org/bincrafters/conan-zmqpp.svg?branch=testing%2F4.2.0)](https://travis-ci.org/bincrafters/conan-zmqpp)
+[![Build Status](https://travis-ci.com/bincrafters/conan-zmqpp.svg?branch=testing%2F4.2.0)](https://travis-ci.com/bincrafters/conan-zmqpp)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-zmqpp?branch=testing%2F4.2.0&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-zmqpp)
 
 [Conan.io](https://conan.io) package recipe for [*zmqpp*](https://github.com/zeromq/zmqpp).

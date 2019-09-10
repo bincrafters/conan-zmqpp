@@ -24,11 +24,11 @@ class ZmqPPConan(ConanFile):
     # Options may need to change depending on the packaged library.
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = "shared=False", "fPIC=True"
+    default_options = {'shared': False, 'fPIC': True}
 
     # Custom attributes for Bincrafters recipe conventions
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
 
     def requirements(self):
         self.requires.add('zmq/4.2.2@bincrafters/stable')
@@ -41,25 +41,25 @@ class ZmqPPConan(ConanFile):
         source_url = "https://github.com/zeromq/zmqpp"
         tools.get("{0}/archive/{1}.tar.gz".format(source_url, self.version))
         extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
-        tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+        os.rename(extracted_dir, self._source_subfolder)
+        tools.replace_in_file(os.path.join(self._source_subfolder, 'CMakeLists.txt'),
                               'target_link_libraries(zmqpp ws2_32)',
                               'if(ZMQPP_BUILD_SHARED)\n'
                               'target_link_libraries(zmqpp ws2_32 iphlpapi)\n'
                               'endif()')
-        tools.replace_in_file(os.path.join(self.source_subfolder, 'CMakeLists.txt'),
+        tools.replace_in_file(os.path.join(self._source_subfolder, 'CMakeLists.txt'),
                               'generate_export_header(zmqpp)',
                               'if(ZMQPP_BUILD_SHARED)\n'
                               'generate_export_header(zmqpp)\n'
                               'else()\n'
                               'generate_export_header(zmqpp-static BASE_NAME zmqpp)\n'
                               'endif()')
-        tools.replace_in_file(os.path.join(self.source_subfolder, 'src', 'zmqpp', 'zap_request.cpp'),
+        tools.replace_in_file(os.path.join(self._source_subfolder, 'src', 'zmqpp', 'zap_request.cpp'),
                               '#include', '#include <iterator>\n#include')
-        tools.replace_in_file(os.path.join(self.source_subfolder, 'src', 'zmqpp', 'socket.cpp'),
+        tools.replace_in_file(os.path.join(self._source_subfolder, 'src', 'zmqpp', 'socket.cpp'),
                               'std::min', '(std::min<size_t>)')
 
-    def configure_cmake(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions['ZMQPP_BUILD_STATIC'] = not self.options.shared
         cmake.definitions['ZMQPP_BUILD_SHARED'] = self.options.shared
@@ -73,16 +73,16 @@ class ZmqPPConan(ConanFile):
         cmake.definitions['ZEROMQ_INCLUDE_DIR'] = self.deps_cpp_info['zmq'].include_paths[0]
         if self.settings.os != 'Windows':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
-        cmake.configure(build_folder=self.build_subfolder)
+        cmake.configure(build_folder=self._build_subfolder)
         return cmake
 
     def build(self):
-        cmake = self.configure_cmake()
+        cmake = self._configure_cmake()
         cmake.build()
 
     def package(self):
-        self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
-        cmake = self.configure_cmake()
+        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
+        cmake = self._configure_cmake()
         cmake.install()
 
     def package_info(self):
