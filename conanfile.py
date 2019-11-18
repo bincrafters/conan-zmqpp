@@ -8,7 +8,6 @@ class ZmqPPConan(ConanFile):
     description = "0mq 'highlevel' C++ bindings"
     url = "https://github.com/bincrafters/conan-zmqpp"
     homepage = "https://github.com/zeromq/zmqpp"
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "MPL 2.0"
 
     # Packages the license for the conanfile.py
