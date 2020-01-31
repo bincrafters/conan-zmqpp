@@ -27,7 +27,7 @@ class ZmqPPConan(ConanFile):
     _build_subfolder = "build_subfolder"
 
     def requirements(self):
-        self.requires.add('zmq/4.2.2@bincrafters/stable')
+        self.requires.add('zeromq/4.3.2')
 
     def config_options(self):
         if self.settings.os == 'Windows':
@@ -63,10 +63,10 @@ class ZmqPPConan(ConanFile):
         cmake.definitions['ZMQPP_BUILD_CLIENT'] = False
         cmake.definitions['ZMQPP_BUILD_TESTS'] = False
         cmake.definitions['ZMQPP_LIBZMQ_CMAKE'] = True
-        cmake.definitions['ZMQPP_LIBZMQ_NAME_STATIC'] = self.deps_cpp_info['zmq'].libs[0]
-        cmake.definitions['ZMQPP_LIBZMQ_NAME_SHARED'] = self.deps_cpp_info['zmq'].libs[0]
-        cmake.definitions['ZEROMQ_LIB_DIR'] = self.deps_cpp_info['zmq'].lib_paths[0]
-        cmake.definitions['ZEROMQ_INCLUDE_DIR'] = self.deps_cpp_info['zmq'].include_paths[0]
+        cmake.definitions['ZMQPP_LIBZMQ_NAME_STATIC'] = self.deps_cpp_info['zeromq'].libs[0]
+        cmake.definitions['ZMQPP_LIBZMQ_NAME_SHARED'] = self.deps_cpp_info['zeromq'].libs[0]
+        cmake.definitions['ZEROMQ_LIB_DIR'] = self.deps_cpp_info['zeromq'].lib_paths[0]
+        cmake.definitions['ZEROMQ_INCLUDE_DIR'] = self.deps_cpp_info['zeromq'].include_paths[0]
         if self.settings.os != 'Windows':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.configure(build_folder=self._build_subfolder)
