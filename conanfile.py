@@ -11,7 +11,6 @@ class ZmqPPConan(ConanFile):
     license = "MPL 2.0"
 
     # Packages the license for the conanfile.py
-    exports = ["LICENSE.md"]
 
     # Remove following lines if the target lib does not use cmake.
     exports_sources = ["CMakeLists.txt"]
